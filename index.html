@@ -436,8 +436,8 @@ section{position:relative;padding:64px 18px;text-align:center}
   <p class="bless2 reveal">कुंकुम, जया, चंचल, युवांशी</p>
 </section>
 
-<audio id="bgm" src="shehnai.mp3" loop preload="auto"></audio>
-<div id="ytbox" aria-hidden="true" style="position:fixed;left:-9999px;top:0;width:2px;height:2px;overflow:hidden;opacity:.01;pointer-events:none"></div>
+
+<aside id="songpanel" aria-label="Wedding song" style="display:none;position:fixed;left:12px;bottom:12px;z-index:250;width:240px;background:#5c0816;color:#fff4d6;border:1px solid #dea645;border-radius:8px;overflow:hidden;box-shadow:0 6px 20px #0005"><div style="padding:7px 10px;font:12px Georgia,serif">Din Shagna Da · Jasleen Royal</div><div id="ytbox"></div><p id="songstatus" style="margin:0;padding:7px 10px;font:11px/1.4 Arial,sans-serif" aria-live="polite">If music does not start, use the player above.</p></aside>
 <button class="music" id="musicbtn" aria-label="Mute or unmute music">♪</button>
 <script>
 /* ---- images (injected at build) ---- */
@@ -523,54 +523,20 @@ document.querySelectorAll('.mandala').forEach(function(svg){
   }
   run();
 })();
-/* ---- music: Chaudhary (YouTube embed) with shehnai fallback ---- */
-var ytPlayer=null,ytReady=false,ytFailed=false,musicStarted=false,usingYT=false;
+/* ---- music: official Din Shagna Da, no substitute audio ---- */
+var ytPlayer=null,ytReady=false,musicStarted=false,musicMuted=false;
+function songStatus(t){document.getElementById('songstatus').textContent=t;}
 (function(){var t=document.createElement('script');t.src='https://www.youtube.com/iframe_api';document.head.appendChild(t);})();
 window.onYouTubeIframeAPIReady=function(){
-  ytPlayer=new YT.Player('ytbox',{width:'2',height:'2',videoId:'9YvG9H9eHtA',
-   playerVars:{autoplay:0,loop:1,playlist:'9YvG9H9eHtA',controls:0,disablekb:1,fs:0,iv_load_policy:3,modestbranding:1,playsinline:1,rel:0},
-   events:{onReady:function(){ytReady=true;},
-    onError:function(){ytFailed=true;},
-    onStateChange:function(e){if(e.data==1){usingYT=true;var a=document.getElementById('bgm');if(a&&!a.paused)a.pause();}}}});
+ ytPlayer=new YT.Player('ytbox',{width:'240',height:'200',videoId:'9YvG9H9eHtA',playerVars:{autoplay:0,loop:1,playlist:'9YvG9H9eHtA',controls:1,playsinline:1,rel:0},events:{
+ onReady:function(){ytReady=true;if(musicStarted)attemptSong();},
+ onError:function(){songStatus('YouTube cannot play here. No other tune will play.');},
+ onAutoplayBlocked:function(){songStatus('Your browser needs a tap on the player to start music.');},
+ onStateChange:function(e){if(e.data===1)songStatus('Playing Din Shagna Da · Phillauri');}}});
 };
-function startMusic(){
-  if(musicStarted)return;musicStarted=true;
-  var bgm=document.getElementById('bgm');
-  if(ytReady&&!ytFailed&&ytPlayer&&ytPlayer.playVideo){
-    ytPlayer.playVideo();
-    setTimeout(function(){if(!usingYT){try{ytPlayer.stopVideo();}catch(e){}bgm.play().catch(function(){});}},3500);
-    return;
-  }
-  bgm.play().catch(function(){});
-  var tries=0;
-  var iv=setInterval(function(){
-    if(usingYT||ytFailed||tries>25){clearInterval(iv);return;}
-    tries++;
-    if(ytReady&&ytPlayer&&ytPlayer.playVideo){
-      ytPlayer.playVideo();
-      setTimeout(function(){if(usingYT){bgm.pause();}else{try{ytPlayer.stopVideo();}catch(e){}}},3000);
-      clearInterval(iv);
-    }
-  },800);
-}
-(function(){
-  var b=document.getElementById('musicbtn'),bgm=document.getElementById('bgm');
-  b.addEventListener('click',function(){
-    if(usingYT&&ytPlayer&&ytPlayer.isMuted){
-      if(ytPlayer.isMuted()){ytPlayer.unMute();b.textContent='♪';}
-      else{ytPlayer.mute();b.textContent='✕';}
-      return;
-    }
-    if(bgm.paused){bgm.play().catch(function(){});b.textContent='♪';}
-    else{bgm.muted=!bgm.muted;b.textContent=bgm.muted?'✕':'♪';}
-  });
-  document.addEventListener('pointerdown',function f(){
-    if(!musicStarted){startMusic();}
-    else if(!usingYT&&bgm.paused){bgm.play().catch(function(){});}
-    document.removeEventListener('pointerdown',f);
-  });
-})();
+function attemptSong(){if(!musicStarted||!ytReady||!ytPlayer)return;if(musicMuted)ytPlayer.mute();else ytPlayer.unMute();ytPlayer.playVideo();}
+function startMusic(){if(musicStarted)return;musicStarted=true;document.getElementById('songpanel').style.display='block';attemptSong();}
+document.getElementById('musicbtn').addEventListener('click',function(){musicMuted=!musicMuted;this.textContent=musicMuted?'✕':'♪';this.setAttribute('aria-label',musicMuted?'Unmute music':'Mute music');if(ytReady&&ytPlayer){if(musicMuted)ytPlayer.mute();else ytPlayer.unMute();}});
 </script>
 </body>
 </html>
-
