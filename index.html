@@ -76,13 +76,6 @@ section{position:relative;padding:64px 18px;text-align:center}
 .heroc .invite{margin-top:14px;font-family:var(--corm);font-style:italic;font-size:clamp(1rem,4vw,1.3rem);color:#7a4a12}
 .hnames{margin-top:8px;font-family:var(--cinzel);font-weight:900;color:var(--maroon);font-size:clamp(2.6rem,11vw,5.2rem);line-height:1.06;text-shadow:0 2px 0 rgba(255,244,220,.5)}
 .hnames .amp{display:block;font-size:.5em;color:var(--gold2);margin:2px 0}
-.couple{display:flex;flex-wrap:nowrap;justify-content:center;align-items:center;gap:clamp(6px,2vw,20px);margin-top:16px}
-.person{margin:0;min-width:0;flex:0 1 auto}
-.pframe{display:block;width:clamp(100px,29vw,200px);aspect-ratio:3/4;overflow:hidden;border:3px solid var(--gold);border-radius:999px 999px 16px 16px;box-shadow:0 0 0 3px rgba(255,244,220,.65),0 14px 30px rgba(58,4,16,.35);background:#f6e2b8}
-.pframe img{width:100%;height:100%;object-fit:cover;display:block}
-.person figcaption{font-family:var(--cinzel);font-weight:900;color:var(--maroon);font-size:clamp(1.05rem,4.8vw,1.7rem);margin-top:8px;text-shadow:0 1px 0 rgba(255,244,220,.55)}
-@media (max-width:400px){.pframe{width:100px}}
-.camp{font-family:var(--cinzel);font-weight:900;color:var(--gold2);font-size:clamp(1.5rem,7vw,2.6rem);text-shadow:0 2px 0 rgba(255,244,220,.5)}
 .hdate{margin-top:14px;display:inline-block;font-family:var(--cinzel);font-weight:700;letter-spacing:.22em;color:#fff;font-size:clamp(.95rem,4vw,1.3rem);background:linear-gradient(160deg,#a3172f,#6d0a1d);border:2px solid var(--gold);border-radius:10px;padding:12px 22px;box-shadow:0 10px 26px rgba(109,10,29,.35)}
 .scrollnow{position:absolute;left:50%;bottom:3.4vh;transform:translateX(-50%);z-index:4;font-family:var(--corm);letter-spacing:.34em;font-size:.8rem;color:#fff8;background:rgba(58,4,16,.55);border:1px solid rgba(246,210,122,.65);color:#ffeec2;border-radius:999px;padding:9px 18px;animation:bob 2.2s ease-in-out infinite}
 @keyframes bob{50%{transform:translate(-50%,7px)}}
@@ -259,11 +252,7 @@ section{position:relative;padding:64px 18px;text-align:center}
   <div class="heroc">
     <div class="ganesh">॥ श्री गणेशाय नमः ॥</div>
     <div class="invite">We cordially invite you to the wedding of</div>
-    <div class="couple">
-      <figure class="person"><span class="pframe"><img src="bride.jpg" alt="Anjali, the bride (illustration)"></span><figcaption>Anjali</figcaption></figure>
-      <span class="camp">&amp;</span>
-      <figure class="person"><span class="pframe"><img src="groom.jpg" alt="Govind, the groom (illustration)"></span><figcaption>Govind</figcaption></figure>
-    </div>
+    <h1 class="hnames">Anjali<span class="amp">&amp;</span>Govind</h1>
     <div class="hdate">05 &nbsp;·&nbsp; 12 &nbsp;·&nbsp; 2026</div>
   </div>
   <div class="scrollnow">SCROLL NOW ⌄</div>
@@ -313,13 +302,13 @@ section{position:relative;padding:64px 18px;text-align:center}
   <div class="divider reveal"><i></i><b>❖</b><i></i></div>
   <div class="couple">
     <div class="person g reveal">
-      <div class="arch"><div class="inner"><span class="init">गो</span></div></div>
+      <div class="arch"><div class="inner"><img src="groom.jpg" alt="Govind, the groom (illustration)" style="width:100%;height:100%;object-fit:cover;display:block"></div></div>
       <div class="role">The Groom</div>
       <div class="pname">गोविन्द</div>
       <div class="psub">पुत्र श्रीमती मंजूदेवी - श्री किशनलालजी डुंखवाल<br/>जसवन्तगढ़</div>
     </div>
     <div class="person b reveal">
-      <div class="arch"><div class="inner"><span class="init">अ</span></div></div>
+      <div class="arch"><div class="inner"><img src="bride.jpg" alt="Anjali, the bride (illustration)" style="width:100%;height:100%;object-fit:cover;display:block"></div></div>
       <div class="role">The Bride</div>
       <div class="pname">अंजली (पायल)</div>
       <div class="psub">पुत्री श्रीमती विनितादेवी - गौरीशंकरजी निर्वाण<br/>लाडनूँ</div>
