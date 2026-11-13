@@ -256,7 +256,7 @@ section{position:relative;padding:64px 18px;text-align:center}
     <div class="hdate">05 &nbsp;·&nbsp; 12 &nbsp;·&nbsp; 2026</div>
     <aside id="songpanel" aria-label="Wedding song" style="width:200px;margin:18px auto 0;line-height:0">
       <div id="ytbox"></div>
-      <p id="songstatus" style="margin:6px -28px 0;font:11px/1.35 Arial,sans-serif;color:#6d0a1d" aria-live="polite">Din Shagna Da · Jasleen Royal</p>
+      <p id="songstatus" style="margin:6px -28px 0;font:11px/1.35 Arial,sans-serif;color:#6d0a1d" aria-live="polite">Chaudhary · Selected clip</p>
     </aside>
   </div>
   <div class="scrollnow">SCROLL NOW ⌄</div>
@@ -527,21 +527,21 @@ document.querySelectorAll('.mandala').forEach(function(svg){
   }
   run();
 })();
-/* ---- music: official Din Shagna Da, no substitute audio ---- */
+/* ---- music: official Chaudhary, no substitute audio ---- */
 var ytPlayer=null,ytReady=false,musicStarted=false,musicMuted=false,songAttempted=false;
 function songStatus(t){document.getElementById('songstatus').textContent=t;}
 (function(){var t=document.createElement('script');t.src='https://www.youtube.com/iframe_api';document.head.appendChild(t);})();
 window.onYouTubeIframeAPIReady=function(){
- ytPlayer=new YT.Player('ytbox',{width:'200',height:'200',videoId:'9YvG9H9eHtA',playerVars:{autoplay:0,loop:1,playlist:'9YvG9H9eHtA',controls:1,playsinline:1,rel:0},events:{
+ ytPlayer=new YT.Player('ytbox',{width:'200',height:'200',videoId:'6d6uGrs0QTA',playerVars:{autoplay:0,loop:1,playlist:'6d6uGrs0QTA',controls:1,playsinline:1,rel:0},events:{
  onReady:function(){ytReady=true;if(musicStarted)attemptSong();},
  onError:function(){songStatus('YouTube cannot play here. No other tune will play.');},
  onAutoplayBlocked:function(){songStatus('Tap the player to start music.');},
  onStateChange:function(e){
- if(e.data===1)songStatus('Din Shagna Da · Playing');
+ if(e.data===1)songStatus('Chaudhary · Playing');
  else if(e.data===2)songStatus('Music paused · Tap the player to resume');
- else if(e.data===3)songStatus('Loading Din Shagna Da…');
- else if(e.data===0)songStatus('Din Shagna Da');
- else songStatus('Din Shagna Da · Tap the player if needed');
+ else if(e.data===3)songStatus('Loading Chaudhary…');
+ else if(e.data===0)songStatus('Chaudhary');
+ else songStatus('Chaudhary · Tap the player if needed');
  }}});
 };
 function attemptSong(){
@@ -561,4 +561,4 @@ document.addEventListener('visibilitychange',function(){if(!document.hidden)atte
 document.getElementById('musicbtn').addEventListener('click',function(){musicMuted=!musicMuted;this.textContent=musicMuted?'✕':'♪';this.setAttribute('aria-label',musicMuted?'Unmute music':'Mute music');if(ytReady&&ytPlayer){if(musicMuted)ytPlayer.mute();else ytPlayer.unMute();}});
 </script>
 </body>
-       </html>
+  </html>
