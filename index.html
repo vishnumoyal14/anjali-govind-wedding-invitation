@@ -71,7 +71,7 @@ section{position:relative;padding:64px 18px;text-align:center}
 #hero{min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:0;overflow:hidden}
 .sky{position:absolute;inset:0;background:linear-gradient(to bottom,#7fb2e0 0%,#a8c6e8 16%,#f6c489 46%,#fbd9a8 66%,#fdeed3 100%)}
 .palace{position:absolute;left:0;right:0;bottom:0;height:62%;background-size:cover;background-position:center bottom;-webkit-mask-image:linear-gradient(to bottom,transparent,#000 26%);mask-image:linear-gradient(to bottom,transparent,#000 26%)}
-.heroc{position:relative;z-index:3;padding:9vh 20px 0;text-align:center}
+.heroc{position:relative;z-index:3;padding:9vh 20px 76px;text-align:center}
 .ganesh{font-family:var(--deva);font-weight:600;color:#8a5a12;font-size:clamp(1rem,4vw,1.35rem);text-shadow:0 1px 0 rgba(255,255,255,.6)}
 .heroc .invite{margin-top:14px;font-family:var(--corm);font-style:italic;font-size:clamp(1rem,4vw,1.3rem);color:#7a4a12}
 .hnames{margin-top:8px;font-family:var(--cinzel);font-weight:900;color:var(--maroon);font-size:clamp(2.6rem,11vw,5.2rem);line-height:1.06;text-shadow:0 2px 0 rgba(255,244,220,.5)}
@@ -254,6 +254,10 @@ section{position:relative;padding:64px 18px;text-align:center}
     <div class="invite">We cordially invite you to the wedding of</div>
     <h1 class="hnames">Anjali<span class="amp">&amp;</span>Govind</h1>
     <div class="hdate">05 &nbsp;·&nbsp; 12 &nbsp;·&nbsp; 2026</div>
+    <aside id="songpanel" aria-label="Wedding song" style="width:200px;margin:18px auto 0;line-height:0">
+      <div id="ytbox"></div>
+      <p id="songstatus" style="margin:6px -28px 0;font:11px/1.35 Arial,sans-serif;color:#6d0a1d" aria-live="polite">Din Shagna Da · Jasleen Royal</p>
+    </aside>
   </div>
   <div class="scrollnow">SCROLL NOW ⌄</div>
 </section>
@@ -437,7 +441,7 @@ section{position:relative;padding:64px 18px;text-align:center}
 </section>
 
 
-<aside id="songpanel" aria-label="Wedding song" style="display:none;position:fixed;left:12px;bottom:12px;z-index:250;width:240px;background:#5c0816;color:#fff4d6;border:1px solid #dea645;border-radius:8px;overflow:hidden;box-shadow:0 6px 20px #0005"><div style="padding:7px 10px;font:12px Georgia,serif">Din Shagna Da · Jasleen Royal</div><div id="ytbox"></div><p id="songstatus" style="margin:0;padding:7px 10px;font:11px/1.4 Arial,sans-serif" aria-live="polite">If music does not start, use the player above.</p></aside>
+
 <button class="music" id="musicbtn" aria-label="Mute or unmute music">♪</button>
 <script>
 /* ---- images (injected at build) ---- */
@@ -524,19 +528,37 @@ document.querySelectorAll('.mandala').forEach(function(svg){
   run();
 })();
 /* ---- music: official Din Shagna Da, no substitute audio ---- */
-var ytPlayer=null,ytReady=false,musicStarted=false,musicMuted=false;
+var ytPlayer=null,ytReady=false,musicStarted=false,musicMuted=false,songAttempted=false;
 function songStatus(t){document.getElementById('songstatus').textContent=t;}
 (function(){var t=document.createElement('script');t.src='https://www.youtube.com/iframe_api';document.head.appendChild(t);})();
 window.onYouTubeIframeAPIReady=function(){
- ytPlayer=new YT.Player('ytbox',{width:'240',height:'200',videoId:'9YvG9H9eHtA',playerVars:{autoplay:0,loop:1,playlist:'9YvG9H9eHtA',controls:1,playsinline:1,rel:0},events:{
+ ytPlayer=new YT.Player('ytbox',{width:'200',height:'200',videoId:'9YvG9H9eHtA',playerVars:{autoplay:0,loop:1,playlist:'9YvG9H9eHtA',controls:1,playsinline:1,rel:0},events:{
  onReady:function(){ytReady=true;if(musicStarted)attemptSong();},
  onError:function(){songStatus('YouTube cannot play here. No other tune will play.');},
- onAutoplayBlocked:function(){songStatus('Your browser needs a tap on the player to start music.');},
- onStateChange:function(e){if(e.data===1)songStatus('Playing Din Shagna Da · Phillauri');}}});
+ onAutoplayBlocked:function(){songStatus('Tap the player to start music.');},
+ onStateChange:function(e){
+ if(e.data===1)songStatus('Din Shagna Da · Playing');
+ else if(e.data===2)songStatus('Music paused · Tap the player to resume');
+ else if(e.data===3)songStatus('Loading Din Shagna Da…');
+ else if(e.data===0)songStatus('Din Shagna Da');
+ else songStatus('Din Shagna Da · Tap the player if needed');
+ }}});
 };
-function attemptSong(){if(!musicStarted||!ytReady||!ytPlayer)return;if(musicMuted)ytPlayer.mute();else ytPlayer.unMute();ytPlayer.playVideo();}
-function startMusic(){if(musicStarted)return;musicStarted=true;document.getElementById('songpanel').style.display='block';attemptSong();}
+function attemptSong(){
+ if(!musicStarted||!ytReady||!ytPlayer||songAttempted)return;
+ var gate=document.getElementById('gate');if(gate&&getComputedStyle(gate).display!=='none')return;
+ var r=document.getElementById('ytbox').getBoundingClientRect();
+ var visible=Math.max(0,Math.min(r.bottom,innerHeight)-Math.max(0,r.top))*Math.max(0,Math.min(r.right,innerWidth)-Math.max(0,r.left));
+ if(visible<=r.width*r.height*.5||document.hidden)return;
+ songAttempted=true;if(musicMuted)ytPlayer.mute();else ytPlayer.unMute();ytPlayer.playVideo();
+}
+function startMusic(){
+ if(musicStarted)return;musicStarted=true;
+ attemptSong();setTimeout(attemptSong,3450);
+}
+if('IntersectionObserver' in window){new IntersectionObserver(function(){attemptSong();},{threshold:[0,.51,1]}).observe(document.getElementById('songpanel'));}
+document.addEventListener('visibilitychange',function(){if(!document.hidden)attemptSong();});
 document.getElementById('musicbtn').addEventListener('click',function(){musicMuted=!musicMuted;this.textContent=musicMuted?'✕':'♪';this.setAttribute('aria-label',musicMuted?'Unmute music':'Mute music');if(ytReady&&ytPlayer){if(musicMuted)ytPlayer.mute();else ytPlayer.unMute();}});
 </script>
 </body>
-</html>
+       </html>
