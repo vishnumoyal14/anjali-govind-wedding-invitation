@@ -110,7 +110,7 @@ section{position:relative;padding:64px 18px;text-align:center}
 .scratch .under .r1{font-family:var(--cinzel);font-weight:700;color:var(--maroon);font-size:1.15rem;letter-spacing:.12em}
 .scratch .under .r2{font-family:var(--vibes);font-size:2.2rem;color:#8a5a12;margin-top:6px}
 .scratch canvas{position:absolute;inset:0;width:100%;height:100%;cursor:crosshair;touch-action:none}
-.scratch .hintp{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);font-family:var(--corm);font-size:.78rem;letter-spacing:.2em;color:#7a4a12;background:rgba(255,244,214,.85);padding:4px 12px;border-radius:999px;pointer-events:none}
+.scratch .hintp{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);font-family:var(--corm);font-size:.78rem;letter-spacing:.2em;color:#7a4a12;background:rgba(255,244,214,.85);padding:4px 12px;border-radius:999px;pointer-events:none}.scratch canvas{transition:opacity .6s ease}.scratch .hintp{transition:opacity .35s ease}.scratch.revealed canvas{opacity:0;pointer-events:none}.scratch.started .hintp,.scratch.revealed .hintp{opacity:0}
 /* ---------- couple ---------- */
 .couple{display:flex;justify-content:center;gap:clamp(14px,4vw,44px);flex-wrap:wrap;margin-top:30px}
 .person{width:min(44vw,240px)}
@@ -530,23 +530,7 @@ document.querySelectorAll('.mandala').forEach(function(svg){
     s.textContent=String(Math.floor(n/1e3)%60).padStart(2,'0');}
   tick();setInterval(tick,1000);
 })();
-/* ---- scratch ---- */
-(function(){
-  var c=document.getElementById('sc'),box=c.parentElement,ctx=c.getContext('2d'),done=false;
-  function size(){c.width=box.clientWidth;c.height=box.clientHeight;
-    var g=ctx.createLinearGradient(0,0,c.width,c.height);g.addColorStop(0,'#b3122e');g.addColorStop(1,'#dea645');
-    ctx.globalCompositeOperation='source-over';ctx.fillStyle=g;ctx.fillRect(0,0,c.width,c.height);
-    ctx.fillStyle='rgba(255,244,214,.9)';ctx.font='600 13px "Cormorant Garamond",serif';ctx.textAlign='center';
-    ctx.fillText('SCRATCH HERE',c.width/2,c.height/2);}
-  size();window.addEventListener('resize',size);
-  function scratch(x,y){if(done)return;ctx.globalCompositeOperation='destination-out';
-    ctx.beginPath();ctx.arc(x,y,24,0,7);ctx.fill();}
-  function pos(e){var r=c.getBoundingClientRect(),t=e.touches?e.touches[0]:e;return[t.clientX-r.left,t.clientY-r.top];}
-  var down=false;
-  c.addEventListener('pointerdown',function(e){down=true;var p=pos(e);scratch(p[0],p[1]);});
-  c.addEventListener('pointermove',function(e){if(!down)return;var p=pos(e);scratch(p[0],p[1]);});
-  window.addEventListener('pointerup',function(){down=false;});
-})();
+/* ---- scratch ---- */(function(){var c=document.getElementById('sc'),box=c.parentElement,ctx=c.getContext('2d'),done=false,started=false,moves=0;function paint(){var g=ctx.createLinearGradient(0,0,c.width,c.height);g.addColorStop(0,'#b3122e');g.addColorStop(1,'#dea645');ctx.globalCompositeOperation='source-over';ctx.fillStyle=g;ctx.fillRect(0,0,c.width,c.height);ctx.fillStyle='rgba(255,244,214,.9)';ctx.font='600 13px "Cormorant Garamond",serif';ctx.textAlign='center';ctx.fillText('SCRATCH HERE',c.width/2,c.height/2);}function size(){if(done)return;var prev=null;if(started){prev=document.createElement('canvas');prev.width=c.width;prev.height=c.height;prev.getContext('2d').drawImage(c,0,0);}c.width=box.clientWidth;c.height=box.clientHeight;if(prev){ctx.globalCompositeOperation='source-over';ctx.drawImage(prev,0,0,c.width,c.height);}else{paint();}}function finish(){if(done)return;done=true;box.classList.add('revealed');setTimeout(function(){ctx.clearRect(0,0,c.width,c.height);},650);}function checkDone(){var d=ctx.getImageData(0,0,c.width,c.height).data,clear=0,tot=0;for(var i=3;i<d.length;i+=16){tot++;if(d[i]<40)clear++;}if(clear/tot>=0.4)finish();}size();window.addEventListener('resize',size);function scratch(x,y){if(done)return;if(!started){started=true;box.classList.add('started');}ctx.globalCompositeOperation='destination-out';ctx.beginPath();ctx.arc(x,y,24,0,7);ctx.fill();if(++moves%12===0)checkDone();}function pos(e){var r=c.getBoundingClientRect(),t=e.touches?e.touches[0]:e;return[t.clientX-r.left,t.clientY-r.top];}var down=false;c.addEventListener('pointerdown',function(e){down=true;var p=pos(e);scratch(p[0],p[1]);});c.addEventListener('pointermove',function(e){if(!down)return;var p=pos(e);scratch(p[0],p[1]);});window.addEventListener('pointerup',function(){if(down){down=false;checkDone();}});window.addEventListener('pointercancel',function(){down=false;});})();
 /* ---- car on timeline ---- */
 (function(){
   var tl=document.getElementById('timeline'),car=document.getElementById('car');
