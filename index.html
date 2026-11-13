@@ -222,6 +222,20 @@ section{position:relative;padding:64px 18px;text-align:center}
 .songbox .btn{margin-top:8px;font-size:.68rem;padding:10px 18px}
 .songbox .btn.alt{background:var(--card);color:var(--maroon);border:1.5px solid var(--gold2);box-shadow:none}
 </style>
+<style>
+  /* Readable phone cards; wider screens keep the alternating timeline. */
+  @media(max-width:639px){
+    #timeline .ev{width:calc(100% - 80px);margin:38px 12px 38px 68px}
+    #timeline .tline,#timeline .car{left:30px}
+    #timeline .car{width:46px}
+    #timeline .dot{left:-38px}
+    #timeline .cloth{padding:22px 14px}
+    #timeline .evname{font-size:1.1rem;line-height:1.35;overflow-wrap:break-word}
+    #timeline .evwhen{font-size:1rem;line-height:1.7}
+    #timeline .evtithi{font-size:.8rem}
+  }
+  </style>
+  
 </head>
 <body class="locked">
 <div class="bgpat"></div>
@@ -275,7 +289,7 @@ section{position:relative;padding:64px 18px;text-align:center}
     <div class="sang">संग</div>
     <div class="fam-name">आयुष्मान् गोविन्द</div>
     <div class="lineage">सुपौत्र-स्व. श्रीमती दुर्गादेवी-मदनलालजी डुंखवाल<br/>सुपुत्र-श्रीमती मंजूदेवी-श्री किशनलालजी डुंखवाल<br/>निवासी-जसवन्तगढ़</div>
-    <p class="body deva" style="margin-top:16px">के <b>परिणय बंधन</b> के शुभ मांगलिक बेला पर<br/>आपको सादर आमंत्रित करते हैं।</p>
+    <p class="body deva" style="margin-top:16px">के <b>परिणय बंधन</b> की शुभ मांगलिक बेला पर<br/>आपको सादर आमंत्रित करते हैं।</p>
     <p class="en-line">Together with their families, they request the honour of your presence to celebrate the union of two souls.</p>
   </div>
 </section>
