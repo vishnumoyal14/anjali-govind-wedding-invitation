@@ -76,6 +76,12 @@ section{position:relative;padding:64px 18px;text-align:center}
 .heroc .invite{margin-top:14px;font-family:var(--corm);font-style:italic;font-size:clamp(1rem,4vw,1.3rem);color:#7a4a12}
 .hnames{margin-top:8px;font-family:var(--cinzel);font-weight:900;color:var(--maroon);font-size:clamp(2.6rem,11vw,5.2rem);line-height:1.06;text-shadow:0 2px 0 rgba(255,244,220,.5)}
 .hnames .amp{display:block;font-size:.5em;color:var(--gold2);margin:2px 0}
+.couple{display:flex;justify-content:center;align-items:center;gap:clamp(8px,2.5vw,20px);margin-top:16px}
+.person{margin:0}
+.pframe{display:block;width:clamp(104px,30vw,200px);aspect-ratio:3/4;overflow:hidden;border:3px solid var(--gold);border-radius:999px 999px 16px 16px;box-shadow:0 0 0 3px rgba(255,244,220,.65),0 14px 30px rgba(58,4,16,.35);background:#f6e2b8}
+.pframe img{width:100%;height:100%;object-fit:cover;display:block}
+.person figcaption{font-family:var(--cinzel);font-weight:900;color:var(--maroon);font-size:clamp(1.05rem,4.8vw,1.7rem);margin-top:8px;text-shadow:0 1px 0 rgba(255,244,220,.55)}
+.camp{font-family:var(--cinzel);font-weight:900;color:var(--gold2);font-size:clamp(1.5rem,7vw,2.6rem);text-shadow:0 2px 0 rgba(255,244,220,.5)}
 .hdate{margin-top:14px;display:inline-block;font-family:var(--cinzel);font-weight:700;letter-spacing:.22em;color:#fff;font-size:clamp(.95rem,4vw,1.3rem);background:linear-gradient(160deg,#a3172f,#6d0a1d);border:2px solid var(--gold);border-radius:10px;padding:12px 22px;box-shadow:0 10px 26px rgba(109,10,29,.35)}
 .scrollnow{position:absolute;left:50%;bottom:3.4vh;transform:translateX(-50%);z-index:4;font-family:var(--corm);letter-spacing:.34em;font-size:.8rem;color:#fff8;background:rgba(58,4,16,.55);border:1px solid rgba(246,210,122,.65);color:#ffeec2;border-radius:999px;padding:9px 18px;animation:bob 2.2s ease-in-out infinite}
 @keyframes bob{50%{transform:translate(-50%,7px)}}
@@ -252,7 +258,11 @@ section{position:relative;padding:64px 18px;text-align:center}
   <div class="heroc">
     <div class="ganesh">॥ श्री गणेशाय नमः ॥</div>
     <div class="invite">We cordially invite you to the wedding of</div>
-    <h1 class="hnames">Anjali<span class="amp">&amp;</span>Govind</h1>
+    <div class="couple">
+      <figure class="person"><span class="pframe"><img src="bride.jpg" alt="Anjali, the bride (illustration)"></span><figcaption>Anjali</figcaption></figure>
+      <span class="camp">&amp;</span>
+      <figure class="person"><span class="pframe"><img src="groom.jpg" alt="Govind, the groom (illustration)"></span><figcaption>Govind</figcaption></figure>
+    </div>
     <div class="hdate">05 &nbsp;·&nbsp; 12 &nbsp;·&nbsp; 2026</div>
   </div>
   <div class="scrollnow">SCROLL NOW ⌄</div>
@@ -437,6 +447,7 @@ section{position:relative;padding:64px 18px;text-align:center}
 </section>
 
 <audio id="bgm" src="shehnai.mp3" loop preload="auto"></audio>
+<div id="ytbox" aria-hidden="true" style="position:fixed;left:-9999px;top:0;width:2px;height:2px;overflow:hidden;opacity:.01;pointer-events:none"></div>
 <button class="music" id="musicbtn" aria-label="Mute or unmute music">♪</button>
 <script>
 /* ---- images (injected at build) ---- */
@@ -451,8 +462,7 @@ document.getElementById('doorr').style.backgroundImage='url('+IMG_GATE+')';
 document.getElementById('tap').addEventListener('click',function(){
   var g=document.getElementById('gate');
   g.classList.add('open');
-  var bgm=document.getElementById('bgm');
-  bgm.play().catch(function(){});
+  startMusic();
   setTimeout(function(){g.classList.add('done');document.body.classList.remove('locked');
     document.getElementById('musicbtn').classList.add('show');},2100);
   setTimeout(function(){g.style.display='none';},3400);
@@ -523,18 +533,54 @@ document.querySelectorAll('.mandala').forEach(function(svg){
   }
   run();
 })();
-/* ---- music ---- */
+/* ---- music: Chaudhary (YouTube embed) with shehnai fallback ---- */
+var ytPlayer=null,ytReady=false,ytFailed=false,musicStarted=false,usingYT=false;
+(function(){var t=document.createElement('script');t.src='https://www.youtube.com/iframe_api';document.head.appendChild(t);})();
+window.onYouTubeIframeAPIReady=function(){
+  ytPlayer=new YT.Player('ytbox',{width:'2',height:'2',videoId:'1gukvtH_a3I',
+   playerVars:{autoplay:0,loop:1,playlist:'1gukvtH_a3I',controls:0,disablekb:1,fs:0,iv_load_policy:3,modestbranding:1,playsinline:1,rel:0},
+   events:{onReady:function(){ytReady=true;},
+    onError:function(){ytFailed=true;},
+    onStateChange:function(e){if(e.data==1){usingYT=true;var a=document.getElementById('bgm');if(a&&!a.paused)a.pause();}}}});
+};
+function startMusic(){
+  if(musicStarted)return;musicStarted=true;
+  var bgm=document.getElementById('bgm');
+  if(ytReady&&!ytFailed&&ytPlayer&&ytPlayer.playVideo){
+    ytPlayer.playVideo();
+    setTimeout(function(){if(!usingYT){try{ytPlayer.stopVideo();}catch(e){}bgm.play().catch(function(){});}},3500);
+    return;
+  }
+  bgm.play().catch(function(){});
+  var tries=0;
+  var iv=setInterval(function(){
+    if(usingYT||ytFailed||tries>25){clearInterval(iv);return;}
+    tries++;
+    if(ytReady&&ytPlayer&&ytPlayer.playVideo){
+      ytPlayer.playVideo();
+      setTimeout(function(){if(usingYT){bgm.pause();}else{try{ytPlayer.stopVideo();}catch(e){}}},3000);
+      clearInterval(iv);
+    }
+  },800);
+}
 (function(){
   var b=document.getElementById('musicbtn'),bgm=document.getElementById('bgm');
   b.addEventListener('click',function(){
+    if(usingYT&&ytPlayer&&ytPlayer.isMuted){
+      if(ytPlayer.isMuted()){ytPlayer.unMute();b.textContent='♪';}
+      else{ytPlayer.mute();b.textContent='✕';}
+      return;
+    }
     if(bgm.paused){bgm.play().catch(function(){});b.textContent='♪';}
     else{bgm.muted=!bgm.muted;b.textContent=bgm.muted?'✕':'♪';}
   });
   document.addEventListener('pointerdown',function f(){
-    if(bgm.paused){bgm.play().catch(function(){});}
+    if(!musicStarted){startMusic();}
+    else if(!usingYT&&bgm.paused){bgm.play().catch(function(){});}
     document.removeEventListener('pointerdown',f);
   });
 })();
 </script>
 </body>
 </html>
+
